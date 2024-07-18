@@ -4,11 +4,11 @@ import java.awt.Graphics;
 public class Explorer {
     double x, y, vx, vy;
 
-    public Explorer(int x, int y, double vx, double vy){
+    public Explorer(int x, int y){
         this.x = x;
         this.y = y;
-        this.vx = vx;
-        this.vy = vy;
+        //this.vx = vx;
+        //this.vy = vy;
     }
     void update(int canvasWidth, int canvasHeight) {
         x += vx;

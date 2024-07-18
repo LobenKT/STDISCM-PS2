@@ -92,7 +92,10 @@ public class SimulationPanel extends JPanel {
 
         @Override
         public Dimension getPreferredSize() {
-            return new Dimension(1280, 720);
+            if (threadManager.getExplorerCount() <=0)
+                return new Dimension(1280, 720);
+            else
+                return new Dimension(100, 100);
         }
 
         @Override
@@ -117,7 +120,8 @@ public class SimulationPanel extends JPanel {
 
             g.setColor(Color.WHITE);
             threadManager.drawParticles(g, canvasHeight);
-
+            if (threadManager.getExplorerCount()>0)
+                threadManager.drawExplorer(g, canvasHeight);
             if (fpsToDisplay >= 60){
                 g.setColor(Color.GREEN);
             } else if (fpsToDisplay >= 30){

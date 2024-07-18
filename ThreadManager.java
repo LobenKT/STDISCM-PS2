@@ -7,9 +7,12 @@ import java.awt.Graphics;
 
 public class ThreadManager {
     private List<ParticleEngine> processors = new CopyOnWriteArrayList<>();
+    private ExplorerEngine expProcess ;
     private ExecutorService executorService = Executors.newCachedThreadPool(); // Manages threads
     private int canvasWidth, canvasHeight;
     private int particleSize = 0;
+    private int explorerSize = 0;
+
 
     private int roundRobinIndex = 0;
 
@@ -36,7 +39,6 @@ public class ThreadManager {
         // Notify observers or components that the particle count has changed, if necessary
     }
     
-    
 
     private void addProcessor() {
         ParticleEngine engine = new ParticleEngine(canvasWidth, canvasHeight);
@@ -52,12 +54,15 @@ public class ThreadManager {
         lastParticleSizeAtThreadAddition = particleSize;
     }
 
+
     public void checkAndAdjustThread() {
         if (shouldAddThread()) {
             redistributeParticles();
         }
     }
-
+    public int getExplorerCount(){
+        return explorerSize;
+    }
     private boolean shouldAddThread() {
         boolean processingTimeIncreasing = false;
         if (!processingTimesHistory.isEmpty() && particleSize >= 1000) {
@@ -87,7 +92,11 @@ public class ThreadManager {
       //  }
     }
 
-
+    public void addExplorer(Explorer exp){
+        this.expProcess = new ExplorerEngine(canvasWidth,canvasHeight,exp);
+        expProcess.addExplorer(exp);
+        explorerSize++;
+    }
     public void addParticles(List<Particle> particles) {
         if (processors.isEmpty()) {
             addProcessor(); 
@@ -108,6 +117,9 @@ public class ThreadManager {
         for (ParticleEngine processor : processors) {
             processor.getParticleController().drawParticles(g, canvasHeight);
         }
+    }
+    public void drawExplorer(Graphics g, int canvasHeight){
+        expProcess.getExplorerController().drawExplorer(g, canvasHeight);
     }
 
     public int getParticleSize() {
