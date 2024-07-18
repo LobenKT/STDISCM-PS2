@@ -43,7 +43,8 @@ public class ControlPanel extends JFrame {
         mainPanel.add(createParticleInputPanel());
         mainPanel.add(createBatchAdditionPanel()); // Add batch addition panel
         setupClearButton(mainPanel); // Pass the mainPanel when calling the method.
-    
+        setUpExplorer(mainPanel);
+
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(mainPanel, BorderLayout.NORTH);
         getContentPane().add(feedbackPanel, BorderLayout.CENTER);
@@ -62,6 +63,21 @@ public class ControlPanel extends JFrame {
         JPanel clearButtonPanel = new JPanel();
         clearButtonPanel.add(clearButton);
         mainPanel.add(clearButtonPanel, BorderLayout.SOUTH); // Add clear button at the bottom of the main panel
+    }
+    private void setUpExplorer(JPanel mainPanel){
+        JButton explorerButton = new JButton("Explorer Mode");
+        explorerButton.addActionListener(e -> {
+            dispose();
+
+            threadManager.addExplorer(new Explorer(100,500));
+            //ExplorerControlPanel eip = new ExplorerControlPanel(this.threadManager);
+            //eip.setVisible(true);
+
+        });
+
+        JPanel explorerButtonPanel = new JPanel();
+        explorerButtonPanel.add(explorerButton);
+        mainPanel.add(explorerButtonPanel, BorderLayout.SOUTH); 
     }
     
     private void clearFeedbackDisplay() {
