@@ -11,7 +11,7 @@ public class ThreadManager {
     private final ExecutorService executorService = Executors.newCachedThreadPool();
     private int canvasWidth, canvasHeight;
     private int particleCount = 0;
-    private int explorerCount = 0;
+    private boolean isExplorerMode = false;  // Toggle between modes
     private int roundRobinIndex = 0;
     private long lastAverageProcessingTime = 0;
     private final List<Long> processingTimesHistory = new ArrayList<>();
@@ -24,6 +24,24 @@ public class ThreadManager {
         if (processors.isEmpty()) {
             addProcessor();
         }
+    }
+
+    public boolean toggleMode() {
+        isExplorerMode = !isExplorerMode;
+        if (isExplorerMode) {
+            if (explorerEngine == null) {
+                explorerEngine = new ExplorerEngine(canvasWidth, canvasHeight);
+                executorService.execute(explorerEngine);
+            } else {
+                // Assume explorerEngine can be paused or resumed
+                explorerEngine.resume();
+            }
+        } else {
+            if (explorerEngine != null) {
+                explorerEngine.pause();
+            }
+        }
+        return isExplorerMode;
     }
 
     public void clearParticles() {
@@ -40,33 +58,6 @@ public class ThreadManager {
         lastParticleCountAtThreadAddition = particleCount;
     }
 
-    private void addProcessor(List<Particle> particles) {
-        ParticleEngine engine = new ParticleEngine(canvasWidth, canvasHeight, particles);
-        processors.add(engine);
-        executorService.execute(engine);
-        lastParticleCountAtThreadAddition = particleCount;
-    }
-
-    public void checkAndAdjustThread() {
-        if (shouldAddThread()) {
-            redistributeParticles();
-        }
-    }
-
-    public int getExplorerCount() {
-        return explorerCount;
-    }
-
-    private boolean shouldAddThread() {
-        boolean processingTimeIncreasing = false;
-        if (!processingTimesHistory.isEmpty() && particleCount >= 1000) {
-            long currentAverageProcessingTime = processingTimesHistory.get(processingTimesHistory.size() - 1);
-            processingTimeIncreasing = currentAverageProcessingTime > lastAverageProcessingTime;
-        }
-        boolean significantParticleIncrease = particleCount >= lastParticleCountAtThreadAddition * 1.10;
-        return processingTimeIncreasing && processors.size() < Runtime.getRuntime().availableProcessors() && particleCount != 0 && significantParticleIncrease;
-    }
-
     public synchronized void addParticle(Particle particle) {
         if (processors.isEmpty()) {
             addProcessor();
@@ -75,12 +66,6 @@ public class ThreadManager {
         ParticleEngine selectedProcessor = processors.get(roundRobinIndex);
         selectedProcessor.addParticle(particle);
         roundRobinIndex = (roundRobinIndex + 1) % processors.size();
-    }
-
-    public synchronized void addExplorer(Explorer explorer) {
-        explorerEngine = new ExplorerEngine(canvasWidth, canvasHeight, explorer);
-        explorerEngine.addExplorer(explorer);
-        explorerCount++;
     }
 
     public void addParticles(List<Particle> particles) {
@@ -93,8 +78,10 @@ public class ThreadManager {
     }
 
     public void updateParticles() {
-        for (ParticleEngine processor : processors) {
-            executorService.submit(processor::run);
+        if (!isExplorerMode) {
+            for (ParticleEngine processor : processors) {
+                executorService.submit(processor::run);
+            }
         }
     }
 

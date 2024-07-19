@@ -14,37 +14,37 @@ public class ControlPanel extends JFrame {
         this.threadManager = threadManager;
         setTitle("Particle Controls");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
         setSize(750, 400);
-    
+
         feedbackTextArea = new JTextArea(10, 50);
         feedbackTextArea.setEditable(false);
         JScrollPane feedbackScrollPane = new JScrollPane(feedbackTextArea,
                 JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-    
+
         JLabel feedbackTitle = new JLabel("Output");
         feedbackTitle.setHorizontalAlignment(JLabel.CENTER);
         feedbackTitle.setBorder(new EmptyBorder(10, 0, 10, 0));
         feedbackTitle.setOpaque(true);
         feedbackTitle.setBackground(Color.WHITE);
-    
+
         JPanel feedbackPanel = new JPanel(new BorderLayout());
         feedbackPanel.add(feedbackTitle, BorderLayout.NORTH);
         feedbackPanel.add(feedbackScrollPane, BorderLayout.CENTER);
-    
+
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         mainPanel.add(createParticleInputPanel());
-        mainPanel.add(createBatchAdditionPanel()); // Add batch addition panel
-        setupClearButton(mainPanel); // Pass the mainPanel when calling the method.
-        setUpExplorer(mainPanel);
+        mainPanel.add(createBatchAdditionPanel());
+        setupClearButton(mainPanel);
+        setUpExplorerButton(mainPanel);
 
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(mainPanel, BorderLayout.NORTH);
         getContentPane().add(feedbackPanel, BorderLayout.CENTER);
         pack();
         setLocationRelativeTo(null);
+        setVisible(true);
     }
 
     private void setupClearButton(JPanel mainPanel) {
@@ -53,24 +53,28 @@ public class ControlPanel extends JFrame {
             threadManager.clearParticles(); // Clear all particles in ThreadManager
             clearFeedbackDisplay(); // Clear the output panel
         });
-    
+
         JPanel clearButtonPanel = new JPanel();
         clearButtonPanel.add(clearButton);
         mainPanel.add(clearButtonPanel, BorderLayout.SOUTH); // Add clear button at the bottom of the main panel
     }
 
-    private void setUpExplorer(JPanel mainPanel) {
-        JButton explorerButton = new JButton("Explorer Mode");
-        explorerButton.addActionListener(e -> {
-            dispose();
-            threadManager.addExplorer(new Explorer(100, 500));
-        });
+    private void setUpExplorerButton(JPanel mainPanel) {
+        JButton explorerButton = new JButton("Toggle Explorer Mode");
+        explorerButton.addActionListener(e -> toggleExplorerMode());
 
         JPanel explorerButtonPanel = new JPanel();
         explorerButtonPanel.add(explorerButton);
         mainPanel.add(explorerButtonPanel, BorderLayout.SOUTH); 
     }
-    
+
+    private void toggleExplorerMode() {
+        // Assuming `toggleMode` returns a boolean indicating the current mode after toggle
+        boolean isExplorerMode = threadManager.toggleMode(); // Manage mode state in ThreadManager
+        String mode = isExplorerMode ? "Explorer Mode" : "Developer Mode";
+        JOptionPane.showMessageDialog(this, "Switched to " + mode);
+    }
+
     private void clearFeedbackDisplay() {
         feedbackMessages.clear(); // Clear the list of messages
         feedbackTextArea.setText(""); // Reset the content of the feedback text area
@@ -103,12 +107,12 @@ public class ControlPanel extends JFrame {
         particleInputPanel.add(velocityInput);
 
         particleButtonPanel.add(addButton);
+        addButton.addActionListener(e -> handleParticleAddition(e, numberInput, xInput, yInput, angleInput, velocityInput));
 
         particlePanel.add(particleLabel, BorderLayout.NORTH);
         particlePanel.add(particleInputPanel, BorderLayout.CENTER);
         particlePanel.add(particleButtonPanel, BorderLayout.EAST);
-
-        addButton.addActionListener(e -> handleParticleAddition(e, numberInput, xInput, yInput, angleInput, velocityInput));
+        
         return particlePanel;
     }
 

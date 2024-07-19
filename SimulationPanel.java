@@ -43,7 +43,10 @@ public class SimulationPanel extends JPanel {
 
             if (System.currentTimeMillis() - lastFpsDisplayTime >= 500 && fpsCounter.getFPS() != 0) {
                 drawPanel.setFps(fpsCounter.getFPS());
-                threadManager.checkAndAdjustThread();
+                // Check and adjust thread, only if the explorer mode is not active.
+                if (!threadManager.isExplorerMode()) {
+                    threadManager.checkAndAdjustThread();
+                }
                 lastFpsDisplayTime = System.currentTimeMillis();
             }
 
@@ -102,23 +105,13 @@ public class SimulationPanel extends JPanel {
         }
 
         @Override
-        public Dimension getMaximumSize() {
-            return getPreferredSize();
-        }
-
-        public DrawPanel() {
-            super();
-            setBackground(Color.BLACK);
-        }
-
-        @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
             int canvasHeight = getHeight();
 
             g.setColor(Color.WHITE);
             threadManager.drawParticles(g, canvasHeight);
-            if (threadManager.getExplorerCount() > 0) {
+            if (threadManager.isExplorerMode()) {
                 threadManager.drawExplorer(g, canvasHeight);
             }
 
