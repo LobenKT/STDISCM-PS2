@@ -2,6 +2,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.KeyListener;
+
 
 public class ExplorerPanel extends JPanel{
     private final DrawPanel drawPanel;
@@ -119,10 +121,9 @@ public class ExplorerPanel extends JPanel{
 
             g.setColor(Color.WHITE);
             if (threadManager.getExplorerCount()>0){
-                threadManager.drawParticles(g, canvasHeight);
-
+             //   threadManager.drawParticles(g, canvasHeight);
                 threadManager.drawExplorer(g, canvasHeight);
-
+                zoomToExplorer(g);
             }
             if (fpsToDisplay >= 60){
                 g.setColor(Color.GREEN);
@@ -135,6 +136,27 @@ public class ExplorerPanel extends JPanel{
             g.drawString(String.format("FPS: %.2f", fpsToDisplay), 10, 20);
             g.setColor(Color.BLUE);
             g.drawString(String.format("Number of Particles: %d", threadManager.getParticleCount()), 100, 20);
+        }
+        private void zoomToExplorer(Graphics g) {
+            Explorer explorer = threadManager.getExplorerController().getExplorer();
+            if (explorer != null) {
+                int centerX = getWidth() / 2;
+                int centerY = getHeight() / 2;
+                int explorerX = (int) explorer.getX();
+                int explorerY = (int) explorer.getY();
+                g.translate(centerX - explorerX, centerY - explorerY);
+            }
+        }
+       
+       
+    }
+    @Override
+    public void addNotify() {
+        super.addNotify();
+        requestFocus();
+        KeyListener explorerController = threadManager.getExplorerController();
+        if (explorerController != null) {
+            addKeyListener(explorerController); // Ensure the key listener is added
         }
     }
 

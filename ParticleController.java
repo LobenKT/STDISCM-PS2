@@ -28,7 +28,11 @@ public class ParticleController {
             particle.draw(g, canvasHeight);
         }
     }
-
+   /* public void drawZoom(Graphics g, int canvasHeight) {
+        for (Particle particle : particles) {
+            particle.zoomedDraw(g, canvasHeight);
+        }
+    }*/
     public void clearParticles() {
         particles.clear(); // Clear the list of particles
     }
