@@ -17,7 +17,7 @@ public class ExplorerPanel extends JPanel{
         setLayout(new BorderLayout());
         add(drawPanel, BorderLayout.CENTER);
         this.threadManager=threadManager;
-        threadManager = new ThreadManager();
+        //threadManager = new ThreadManager();
 
         drawPanel.addComponentListener(new ComponentAdapter() {
             @Override
