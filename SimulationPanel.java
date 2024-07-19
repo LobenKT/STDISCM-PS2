@@ -141,10 +141,24 @@ public class SimulationPanel extends JPanel {
                     int peripheryWidth = 33 * 15; // 33 columns of pixels
                     int peripheryHeight = 19 * 15; // 19 rows of pixels
 
-                    int leftX = Math.max(0, explorerX - peripheryWidth / 2);
-                    int topY = Math.max(0, explorerY - peripheryHeight / 2);
+                    int leftX = explorerX - peripheryWidth / 2;
+                    int topY = explorerY - peripheryHeight / 2;
 
-                    g.translate(-leftX, -topY); // Shift the viewport
+                    // Ensure the viewport does not exceed canvas boundaries
+                    if (leftX < 0) {
+                        leftX = 0;
+                    }
+                    if (topY < 0) {
+                        topY = 0;
+                    }
+                    if (leftX + peripheryWidth > canvasWidth) {
+                        leftX = canvasWidth - peripheryWidth;
+                    }
+                    if (topY + peripheryHeight > canvasHeight) {
+                        topY = canvasHeight - peripheryHeight;
+                    }
+
+                    g.setClip(leftX, topY, peripheryWidth, peripheryHeight); // Clip the drawing area to the viewport
 
                     // Draw particles within the periphery
                     threadManager.drawParticles(g, canvasHeight);
@@ -152,7 +166,7 @@ public class SimulationPanel extends JPanel {
                     // Draw explorer
                     threadManager.drawExplorer(g, canvasHeight);
 
-                    g.translate(leftX, topY); // Reset the viewport shift
+                    g.setClip(null); // Reset the clip area
                 }
             } else {
                 threadManager.drawParticles(g, canvasHeight);

@@ -2,7 +2,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 
 public class Explorer {
-    double x, y, vx, vy;
+    private double x, y, vx, vy;
 
     public Explorer(int x, int y) {
         this.x = x;
@@ -43,8 +43,8 @@ public class Explorer {
     }
 
     void draw(Graphics g, int canvasHeight) {
-        int invertedY = canvasHeight - (int) y - 15;
+        int invertedY = canvasHeight - (int)y - 15;
         g.setColor(Color.RED);
-        g.fillRect((int) x, invertedY, 15, 15);
+        g.fillRect((int)x, invertedY, 15, 15);
     }
 }
