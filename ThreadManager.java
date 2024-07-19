@@ -115,7 +115,7 @@ public class ThreadManager {
 
     public void drawParticles(Graphics g, int canvasHeight) {
         for (ParticleEngine processor : processors) {
-            processor.getParticleController().drawParticles(g, canvasHeight);
+                processor.getParticleController().drawParticles(g, canvasHeight);
         }
     }
     public void drawExplorer(Graphics g, int canvasHeight){

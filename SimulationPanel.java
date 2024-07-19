@@ -25,7 +25,9 @@ public class SimulationPanel extends JPanel {
             }
         });
     }
-
+    public Thread sendThread(){
+        return gameThread;
+    }
     public void startGameLoop() {
         threadManager.setCanvasSize(drawPanel.getWidth(), drawPanel.getHeight());
         running = true;
@@ -92,10 +94,8 @@ public class SimulationPanel extends JPanel {
 
         @Override
         public Dimension getPreferredSize() {
-            if (threadManager.getExplorerCount() <=0)
-                return new Dimension(1280, 720);
-            else
-                return new Dimension(100, 100);
+            return new Dimension(1280, 720);
+ 
         }
 
         @Override
@@ -116,12 +116,12 @@ public class SimulationPanel extends JPanel {
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
-            int canvasHeight = getHeight();
+            int canvasHeight=getHeight();
+            
 
             g.setColor(Color.WHITE);
             threadManager.drawParticles(g, canvasHeight);
-            if (threadManager.getExplorerCount()>0)
-                threadManager.drawExplorer(g, canvasHeight);
+            
             if (fpsToDisplay >= 60){
                 g.setColor(Color.GREEN);
             } else if (fpsToDisplay >= 30){

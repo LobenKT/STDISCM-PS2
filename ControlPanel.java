@@ -9,10 +9,10 @@ public class ControlPanel extends JFrame {
     private final ThreadManager threadManager;
     private final JLabel feedbackLabel;
     private final List<String> feedbackMessages = new ArrayList<>();
+    private SimulationPanel currentFrame;
 
-    
-
-    public ControlPanel(ThreadManager threadManager) {
+    public ControlPanel(ThreadManager threadManager,SimulationPanel sim) {
+        this.currentFrame =sim;
         this.threadManager = threadManager;
         setTitle("Particle Controls");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -67,11 +67,15 @@ public class ControlPanel extends JFrame {
     private void setUpExplorer(JPanel mainPanel){
         JButton explorerButton = new JButton("Explorer Mode");
         explorerButton.addActionListener(e -> {
+            threadManager.addExplorer(new Explorer(100,100));
+            ExplorerPanel explorerMode = new ExplorerPanel(this.threadManager);
+            Driver driver = (Driver) SwingUtilities.getWindowAncestor(currentFrame);
+            driver.remove(currentFrame);
+            driver.add(explorerMode);
+            driver.setVisible(true);
             dispose();
 
-            threadManager.addExplorer(new Explorer(100,500));
-            //ExplorerControlPanel eip = new ExplorerControlPanel(this.threadManager);
-            //eip.setVisible(true);
+           
 
         });
 
@@ -79,6 +83,7 @@ public class ControlPanel extends JFrame {
         explorerButtonPanel.add(explorerButton);
         mainPanel.add(explorerButtonPanel, BorderLayout.SOUTH); 
     }
+    
     
     private void clearFeedbackDisplay() {
         feedbackMessages.clear(); // Clear the list of messages
