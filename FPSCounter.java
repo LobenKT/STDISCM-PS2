@@ -15,10 +15,10 @@ public class FPSCounter {
 
         frameCount++;
 
-        if (elapsedTime >= 1000) {
-            fps = frameCount;
-            frameCount = 0;
-            lastTimeCheck = currentTime;
+        if (elapsedTime >= 1000) { // If one second has passed
+            fps = frameCount; // Update FPS count
+            frameCount = 0; // Reset frame count
+            lastTimeCheck = currentTime; // Reset last time check
         }
     }
 

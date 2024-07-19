@@ -8,7 +8,7 @@ public class SimulationPanel extends JPanel {
     private final ThreadManager threadManager;
     private Thread gameThread;
     private volatile boolean running = false;
-    private FPSCounter fpsTracker = new FPSCounter();
+    private final FPSCounter fpsCounter = new FPSCounter();
 
     public SimulationPanel() {
         drawPanel = new DrawPanel();
@@ -25,9 +25,7 @@ public class SimulationPanel extends JPanel {
             }
         });
     }
-    public Thread sendThread(){
-        return gameThread;
-    }
+
     public void startGameLoop() {
         threadManager.setCanvasSize(drawPanel.getWidth(), drawPanel.getHeight());
         running = true;
@@ -36,27 +34,29 @@ public class SimulationPanel extends JPanel {
     }
 
     private void gameLoop() {
-        final long targetDelay = 1000 / 60; 
-        long lastFpsDisplayTime = System.currentTimeMillis(); 
+        final long targetDelay = 1000 / 60; // Target delay for 60 FPS
+        long lastFpsDisplayTime = System.currentTimeMillis();
 
         while (running) {
-            long now = System.currentTimeMillis();
-            fpsTracker.update();
-            if (now - lastFpsDisplayTime >= 500 && fpsTracker.getFPS() != 0) {
-                drawPanel.setFps(fpsTracker.getFPS());
+            long startTime = System.currentTimeMillis();
+            fpsCounter.update();
+
+            if (System.currentTimeMillis() - lastFpsDisplayTime >= 500 && fpsCounter.getFPS() != 0) {
+                drawPanel.setFps(fpsCounter.getFPS());
                 threadManager.checkAndAdjustThread();
-                lastFpsDisplayTime = now;
+                lastFpsDisplayTime = System.currentTimeMillis();
             }
 
             updateAndRepaint();
             threadManager.updateProcessingTimes();
 
-            long sleepTime = targetDelay - (System.currentTimeMillis() - now);
+            long sleepTime = targetDelay - (System.currentTimeMillis() - startTime);
             if (sleepTime > 0) {
                 try {
                     Thread.sleep(sleepTime);
                 } catch (InterruptedException e) {
                     running = false;
+                    Thread.currentThread().interrupt();
                 }
             }
         }
@@ -81,9 +81,8 @@ public class SimulationPanel extends JPanel {
     }
 
     public void refreshDisplay() {
-        drawPanel.repaint(); // This will cause the DrawPanel to redraw and update the particle count display
+        drawPanel.repaint();
     }
-
 
     private class DrawPanel extends JPanel {
         private double fpsToDisplay = 0;
@@ -95,7 +94,6 @@ public class SimulationPanel extends JPanel {
         @Override
         public Dimension getPreferredSize() {
             return new Dimension(1280, 720);
- 
         }
 
         @Override
@@ -116,23 +114,25 @@ public class SimulationPanel extends JPanel {
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
-            int canvasHeight=getHeight();
-            
+            int canvasHeight = getHeight();
 
             g.setColor(Color.WHITE);
             threadManager.drawParticles(g, canvasHeight);
-            
-            if (fpsToDisplay >= 60){
+            if (threadManager.getExplorerCount() > 0) {
+                threadManager.drawExplorer(g, canvasHeight);
+            }
+
+            if (fpsToDisplay >= 60) {
                 g.setColor(Color.GREEN);
-            } else if (fpsToDisplay >= 30){
+            } else if (fpsToDisplay >= 30) {
                 g.setColor(Color.ORANGE);
             } else {
                 g.setColor(Color.RED);
             }
-            
+
             g.drawString(String.format("FPS: %.2f", fpsToDisplay), 10, 20);
             g.setColor(Color.BLUE);
-            g.drawString(String.format("Number of Particles: %d", threadManager.getParticleSize()), 100, 20);
+            g.drawString(String.format("Number of Particles: %d", threadManager.getParticleCount()), 10, 40);
         }
     }
 }

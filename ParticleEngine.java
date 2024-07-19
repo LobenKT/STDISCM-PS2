@@ -4,6 +4,7 @@ public class ParticleEngine implements Runnable {
     private ParticleController particleController;
     private int canvasWidth, canvasHeight;
     private long lastProcessingTime = 0;
+    private volatile boolean running = true; // Flag to control the running state
 
     public ParticleEngine(int canvasWidth, int canvasHeight) {
         this.particleController = new ParticleController();
@@ -12,17 +13,28 @@ public class ParticleEngine implements Runnable {
     }
 
     public ParticleEngine(int canvasWidth, int canvasHeight, List<Particle> particles) {
-        this.particleController = new ParticleController(particles);
+        this.particleController = new ParticleController();
+        for (Particle particle : particles) {
+            this.particleController.addParticle(particle);
+        }
         this.canvasWidth = canvasWidth;
         this.canvasHeight = canvasHeight;
     }
 
     @Override
     public void run() {
-        long startTime = System.currentTimeMillis();
-        particleController.updateParticles(canvasWidth, canvasHeight); // Assuming no walls to manage
-        long endTime = System.currentTimeMillis();
-        lastProcessingTime = endTime - startTime;
+        while (running) {
+            long startTime = System.currentTimeMillis();
+            particleController.updateParticles(canvasWidth, canvasHeight); // Update particle positions
+            long endTime = System.currentTimeMillis();
+            lastProcessingTime = endTime - startTime;
+
+            try {
+                Thread.sleep(16); // Roughly 60 FPS
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
     }
 
     public void addParticle(Particle particle) {
@@ -38,6 +50,10 @@ public class ParticleEngine implements Runnable {
     }
 
     public void clearParticles() {
-        particleController.clearParticles(); // Assuming ParticleController has a method to clear particles
+        particleController.clearParticles(); // Clear all particles
+    }
+
+    public void stop() {
+        running = false; // Provide a method to stop the engine
     }
 }

@@ -6,11 +6,8 @@ public class ParticleController {
     private List<Particle> particles = new CopyOnWriteArrayList<>();
 
     public ParticleController() {
+        // Default constructor
     }
-
-    public ParticleController(List<Particle> particles) {
-        this.particles = new CopyOnWriteArrayList<>(particles);
-    }    
 
     public void addParticle(Particle particle) {
         particles.add(particle);
@@ -22,7 +19,7 @@ public class ParticleController {
         }
     }
 
-    public List<Particle> getParticles(){
+    public List<Particle> getParticles() {
         return particles;
     }
 
@@ -35,5 +32,4 @@ public class ParticleController {
     public void clearParticles() {
         particles.clear(); // Clear the list of particles
     }
-    
 }

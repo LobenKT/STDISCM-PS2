@@ -7,26 +7,21 @@ import javax.swing.border.EmptyBorder;
 
 public class ControlPanel extends JFrame {
     private final ThreadManager threadManager;
-    private final JLabel feedbackLabel;
+    private final JTextArea feedbackTextArea;
     private final List<String> feedbackMessages = new ArrayList<>();
-    private SimulationPanel currentFrame;
 
-    public ControlPanel(ThreadManager threadManager,SimulationPanel sim) {
-        this.currentFrame =sim;
+    public ControlPanel(ThreadManager threadManager) {
         this.threadManager = threadManager;
         setTitle("Particle Controls");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setSize(750, 400);
     
-        feedbackLabel = new JLabel("<html></html>");
-        feedbackLabel.setHorizontalAlignment(JLabel.CENTER);
-    
-        JScrollPane feedbackScrollPane = new JScrollPane(feedbackLabel,
+        feedbackTextArea = new JTextArea(10, 50);
+        feedbackTextArea.setEditable(false);
+        JScrollPane feedbackScrollPane = new JScrollPane(feedbackTextArea,
                 JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        feedbackScrollPane.setPreferredSize(new Dimension(700, 150));
-        feedbackScrollPane.setBorder(null);
     
         JLabel feedbackTitle = new JLabel("Output");
         feedbackTitle.setHorizontalAlignment(JLabel.CENTER);
@@ -51,7 +46,6 @@ public class ControlPanel extends JFrame {
         pack();
         setLocationRelativeTo(null);
     }
-    
 
     private void setupClearButton(JPanel mainPanel) {
         JButton clearButton = new JButton("Clear Particles");
@@ -64,19 +58,12 @@ public class ControlPanel extends JFrame {
         clearButtonPanel.add(clearButton);
         mainPanel.add(clearButtonPanel, BorderLayout.SOUTH); // Add clear button at the bottom of the main panel
     }
-    private void setUpExplorer(JPanel mainPanel){
+
+    private void setUpExplorer(JPanel mainPanel) {
         JButton explorerButton = new JButton("Explorer Mode");
         explorerButton.addActionListener(e -> {
-            threadManager.addExplorer(new Explorer(100,100));
-            ExplorerPanel explorerMode = new ExplorerPanel(this.threadManager);
-            Driver driver = (Driver) SwingUtilities.getWindowAncestor(currentFrame);
-            driver.remove(currentFrame);
-            driver.add(explorerMode);
-            driver.setVisible(true);
             dispose();
-
-           
-
+            threadManager.addExplorer(new Explorer(100, 500));
         });
 
         JPanel explorerButtonPanel = new JPanel();
@@ -84,10 +71,9 @@ public class ControlPanel extends JFrame {
         mainPanel.add(explorerButtonPanel, BorderLayout.SOUTH); 
     }
     
-    
     private void clearFeedbackDisplay() {
         feedbackMessages.clear(); // Clear the list of messages
-        feedbackLabel.setText("<html></html>"); // Reset the HTML content of the feedback label
+        feedbackTextArea.setText(""); // Reset the content of the feedback text area
     }
 
     private JPanel createParticleInputPanel() {
@@ -294,11 +280,10 @@ public class ControlPanel extends JFrame {
 
     private void updateFeedbackDisplay(String feedback) {
         feedbackMessages.add(feedback);
-        StringBuilder feedbackHtml = new StringBuilder("<html>");
+        StringBuilder feedbackContent = new StringBuilder();
         for (int i = feedbackMessages.size() - 1; i >= 0; i--) {
-            feedbackHtml.append(feedbackMessages.get(i)).append("<br>");
+            feedbackContent.append(feedbackMessages.get(i)).append("\n");
         }
-        feedbackHtml.append("</html>");
-        feedbackLabel.setText(feedbackHtml.toString());
+        feedbackTextArea.setText(feedbackContent.toString());
     }
 }

@@ -22,12 +22,11 @@ public class Driver extends JFrame {
     public static void main(String[] args) {
         EventQueue.invokeLater(() -> {
             Driver driver = new Driver();
-            if (driver.simulationPanel != null) {
-                ControlPanel controlPanel = new ControlPanel(driver.simulationPanel.getThreadManager());
-                controlPanel.setVisible(true);
-            } else {
-                System.out.println("SimulationPanel is null.");
-            }
+            ControlPanel controlPanel = new ControlPanel(driver.simulationPanel.getThreadManager());
+            
+            // Position ControlPanel to the right of Driver window
+            controlPanel.setLocation(driver.getX() + driver.getWidth(), driver.getY());
+            controlPanel.setVisible(true);
         });
     }
 }
