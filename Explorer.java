@@ -19,7 +19,7 @@ public class Explorer {
     void update(int canvasWidth, int canvasHeight) {
         x += vx;
         y += vy;
-        
+
         // Boundary conditions to stop the explorer at the edges
         if (x < 0) {
             x = 0;
@@ -35,8 +35,16 @@ public class Explorer {
     }
 
     void draw(Graphics g, int canvasHeight) {
-        int invertedY = canvasHeight - (int)y - 15;
+        int invertedY = canvasHeight - (int) y - 15;
         g.setColor(Color.RED);
-        g.fillRect((int)x, invertedY, 15, 15);
+        g.fillRect((int) x, invertedY, 15, 15);
+    }
+
+    public double getX() {
+        return x;
+    }
+
+    public double getY() {
+        return y;
     }
 }

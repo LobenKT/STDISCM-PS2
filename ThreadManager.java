@@ -98,6 +98,12 @@ public class ThreadManager {
         }
     }
 
+    public void updateExplorer() {
+        if (explorerEngine != null) {
+            executorService.submit(explorerEngine::run);
+        }
+    }
+
     public void drawParticles(Graphics g, int canvasHeight) {
         for (ParticleEngine processor : processors) {
             processor.getParticleController().drawParticles(g, canvasHeight);
@@ -137,5 +143,9 @@ public class ThreadManager {
             processingTimesHistory.remove(0);
         }
         lastAverageProcessingTime = processingTimesHistory.stream().mapToLong(Long::longValue).sum() / processingTimesHistory.size();
+    }
+
+    public ExplorerController getExplorerController() {
+        return explorerEngine != null ? explorerEngine.getExplorerController() : null;
     }
 }

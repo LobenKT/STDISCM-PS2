@@ -9,11 +9,8 @@ public class ControlPanel extends JFrame {
     private final ThreadManager threadManager;
     private final JTextArea feedbackTextArea;
     private final List<String> feedbackMessages = new ArrayList<>();
-    private SimulationPanel currentFrame;
 
-
-    public ControlPanel(ThreadManager threadManager,SimulationPanel sim) {
-        this.currentFrame =sim;
+    public ControlPanel(ThreadManager threadManager) {
         this.threadManager = threadManager;
         setTitle("Particle Controls");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -67,12 +64,6 @@ public class ControlPanel extends JFrame {
         explorerButton.addActionListener(e -> {
             dispose();
             threadManager.addExplorer(new Explorer(100, 500));
-            ExplorerPanel explorerMode = new ExplorerPanel(this.threadManager);
-            Driver driver = (Driver) SwingUtilities.getWindowAncestor(currentFrame);
-            driver.remove(currentFrame);
-            driver.add(explorerMode);
-            driver.setVisible(true);
-            dispose();
         });
 
         JPanel explorerButtonPanel = new JPanel();

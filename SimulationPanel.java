@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.KeyListener;
 
 public class SimulationPanel extends JPanel {
     private final DrawPanel drawPanel;
@@ -64,6 +65,7 @@ public class SimulationPanel extends JPanel {
 
     private void updateAndRepaint() {
         threadManager.updateParticles();
+        threadManager.updateExplorer(); // Ensure explorer is updated
         SwingUtilities.invokeLater(drawPanel::repaint);
     }
 
@@ -120,6 +122,7 @@ public class SimulationPanel extends JPanel {
             threadManager.drawParticles(g, canvasHeight);
             if (threadManager.getExplorerCount() > 0) {
                 threadManager.drawExplorer(g, canvasHeight);
+                zoomToExplorer(g);
             }
 
             if (fpsToDisplay >= 60) {
@@ -133,6 +136,27 @@ public class SimulationPanel extends JPanel {
             g.drawString(String.format("FPS: %.2f", fpsToDisplay), 10, 20);
             g.setColor(Color.BLUE);
             g.drawString(String.format("Number of Particles: %d", threadManager.getParticleCount()), 10, 40);
+        }
+
+        private void zoomToExplorer(Graphics g) {
+            Explorer explorer = threadManager.getExplorerController().getExplorer();
+            if (explorer != null) {
+                int centerX = getWidth() / 2;
+                int centerY = getHeight() / 2;
+                int explorerX = (int) explorer.getX();
+                int explorerY = (int) explorer.getY();
+                g.translate(centerX - explorerX, centerY - explorerY);
+            }
+        }
+    }
+
+    @Override
+    public void addNotify() {
+        super.addNotify();
+        requestFocus();
+        KeyListener explorerController = threadManager.getExplorerController();
+        if (explorerController != null) {
+            addKeyListener(explorerController); // Ensure the key listener is added
         }
     }
 }
