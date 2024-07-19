@@ -7,8 +7,8 @@ public class Explorer {
     public Explorer(int x, int y) {
         this.x = x;
         this.y = y;
-        this.vx = 0; // Initialize velocity to 0
-        this.vy = 0; // Initialize velocity to 0
+        this.vx = 0;
+        this.vy = 0;
     }
 
     public void setVelocity(double vx, double vy) {
@@ -24,7 +24,7 @@ public class Explorer {
         return y;
     }
 
-    void update(int canvasWidth, int canvasHeight) {
+    public void update(int canvasWidth, int canvasHeight) {
         x += vx;
         y += vy;
 
@@ -42,9 +42,9 @@ public class Explorer {
         }
     }
 
-    void draw(Graphics g, int canvasHeight) {
-        int invertedY = canvasHeight - (int)y - 15;
+    public void draw(Graphics g, int canvasHeight) {
+        int invertedY = canvasHeight - (int) y - 15;
         g.setColor(Color.RED);
-        g.fillRect((int)x, invertedY, 15, 15);
+        g.fillRect((int) x, invertedY, 15, 15);
     }
 }

@@ -29,7 +29,11 @@ public class SimulationPanel extends JPanel {
 
         setFocusable(true);
         requestFocusInWindow();
-        addKeyListener(threadManager.getExplorerController()); // Ensure the controller listens for key events
+        
+        ExplorerController explorerController = threadManager.getExplorerController();
+        if (explorerController != null) {
+            addKeyListener(explorerController); // Ensure the controller listens for key events
+        }
     }
 
     public void setExplorerSpawnLocation(int x, int y) {
@@ -164,7 +168,7 @@ public class SimulationPanel extends JPanel {
                     threadManager.drawParticles(g, canvasHeight);
 
                     // Draw explorer
-                    threadManager.drawExplorer(g, canvasHeight);
+                    explorer.draw(g, canvasHeight);
 
                     g.setClip(null); // Reset the clip area
                 }

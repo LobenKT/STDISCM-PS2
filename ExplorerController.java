@@ -1,13 +1,8 @@
-import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 public class ExplorerController implements KeyListener {
     private Explorer explorer;
-    private boolean upPressed, downPressed, leftPressed, rightPressed;
-
-    public ExplorerController() {
-    }
 
     public void addExplorer(Explorer explorer) {
         this.explorer = explorer;
@@ -15,29 +10,13 @@ public class ExplorerController implements KeyListener {
 
     public void updateExplorer(int canvasWidth, int canvasHeight) {
         if (explorer != null) {
-            if (upPressed) {
-                explorer.setVelocity(0, 1);
-            } else if (downPressed) {
-                explorer.setVelocity(0, -1);
-            } else if (leftPressed) {
-                explorer.setVelocity(-1, 0);
-            } else if (rightPressed) {
-                explorer.setVelocity(1, 0);
-            } else {
-                explorer.setVelocity(0, 0);
-            }
             explorer.update(canvasWidth, canvasHeight);
         }
     }
 
-    public Explorer getExplorer() {
-        return explorer;
-    }
-
-    public void drawExplorer(Graphics g, int canvasHeight) {
-        if (explorer != null) {
-            explorer.draw(g, canvasHeight);
-        }
+    @Override
+    public void keyTyped(KeyEvent e) {
+        // Not needed for movement
     }
 
     @Override
@@ -45,20 +24,28 @@ public class ExplorerController implements KeyListener {
         if (explorer != null) {
             switch (e.getKeyCode()) {
                 case KeyEvent.VK_W:
-                case KeyEvent.VK_UP:
-                    upPressed = true;
-                    break;
-                case KeyEvent.VK_S:
-                case KeyEvent.VK_DOWN:
-                    downPressed = true;
+                    explorer.setVelocity(0, -1);
                     break;
                 case KeyEvent.VK_A:
-                case KeyEvent.VK_LEFT:
-                    leftPressed = true;
+                    explorer.setVelocity(-1, 0);
+                    break;
+                case KeyEvent.VK_S:
+                    explorer.setVelocity(0, 1);
                     break;
                 case KeyEvent.VK_D:
+                    explorer.setVelocity(1, 0);
+                    break;
+                case KeyEvent.VK_UP:
+                    explorer.setVelocity(0, -1);
+                    break;
+                case KeyEvent.VK_LEFT:
+                    explorer.setVelocity(-1, 0);
+                    break;
+                case KeyEvent.VK_DOWN:
+                    explorer.setVelocity(0, 1);
+                    break;
                 case KeyEvent.VK_RIGHT:
-                    rightPressed = true;
+                    explorer.setVelocity(1, 0);
                     break;
             }
         }
@@ -69,27 +56,16 @@ public class ExplorerController implements KeyListener {
         if (explorer != null) {
             switch (e.getKeyCode()) {
                 case KeyEvent.VK_W:
-                case KeyEvent.VK_UP:
-                    upPressed = false;
-                    break;
-                case KeyEvent.VK_S:
-                case KeyEvent.VK_DOWN:
-                    downPressed = false;
-                    break;
                 case KeyEvent.VK_A:
-                case KeyEvent.VK_LEFT:
-                    leftPressed = false;
-                    break;
+                case KeyEvent.VK_S:
                 case KeyEvent.VK_D:
+                case KeyEvent.VK_UP:
+                case KeyEvent.VK_LEFT:
+                case KeyEvent.VK_DOWN:
                 case KeyEvent.VK_RIGHT:
-                    rightPressed = false;
+                    explorer.setVelocity(0, 0);
                     break;
             }
         }
-    }
-
-    @Override
-    public void keyTyped(KeyEvent e) {
-        // Not used
     }
 }
