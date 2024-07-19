@@ -35,7 +35,7 @@ public class Explorer {
     }
 
     void draw(Graphics g, int canvasHeight) {
-        int invertedY = canvasHeight - (int)y - 15;
+        int invertedY = canvasHeight - (int)y - 15; // Invert y-axis for drawing
         g.setColor(Color.RED);
         g.fillRect((int)x, invertedY, 15, 15);
     }

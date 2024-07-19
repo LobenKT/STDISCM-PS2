@@ -64,6 +64,7 @@ public class SimulationPanel extends JPanel {
 
     private void updateAndRepaint() {
         threadManager.updateParticles();
+        threadManager.updateExplorer();
         SwingUtilities.invokeLater(drawPanel::repaint);
     }
 

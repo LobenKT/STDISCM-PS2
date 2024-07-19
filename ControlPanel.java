@@ -56,7 +56,7 @@ public class ControlPanel extends JFrame {
     
         JPanel clearButtonPanel = new JPanel();
         clearButtonPanel.add(clearButton);
-        mainPanel.add(clearButtonPanel, BorderLayout.SOUTH); // Add clear button at the bottom of the main panel
+        mainPanel.add(clearButtonPanel); // Add clear button
     }
 
     private void setUpExplorer(JPanel mainPanel) {
@@ -68,7 +68,7 @@ public class ControlPanel extends JFrame {
 
         JPanel explorerButtonPanel = new JPanel();
         explorerButtonPanel.add(explorerButton);
-        mainPanel.add(explorerButtonPanel, BorderLayout.SOUTH); 
+        mainPanel.add(explorerButtonPanel); 
     }
     
     private void clearFeedbackDisplay() {

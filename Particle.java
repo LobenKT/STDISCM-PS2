@@ -11,22 +11,22 @@ public class Particle {
     }
 
     public void update(int canvasWidth, int canvasHeight) {
-        x += vx;
-        y += vy;
+        x += vx * 0.1; // Adjust velocity scale
+        y += vy * 0.1; // Adjust velocity scale
 
         // Bounce off the canvas edges
         if (x <= 0) {
             x = 0;
             vx *= -1;
-        } else if (x >= canvasWidth) {
-            x = canvasWidth;
+        } else if (x >= canvasWidth - 10) { // Adjust for particle size
+            x = canvasWidth - 10;
             vx *= -1;
         }
         if (y <= 0) {
             y = 0;
             vy *= -1;
-        } else if (y >= canvasHeight) {
-            y = canvasHeight;
+        } else if (y >= canvasHeight - 10) { // Adjust for particle size
+            y = canvasHeight - 10;
             vy *= -1;
         }
     }

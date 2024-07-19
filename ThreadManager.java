@@ -79,7 +79,7 @@ public class ThreadManager {
 
     public synchronized void addExplorer(Explorer explorer) {
         explorerEngine = new ExplorerEngine(canvasWidth, canvasHeight, explorer);
-        explorerEngine.addExplorer(explorer);
+        executorService.execute(explorerEngine); // Start the explorer engine
         explorerCount++;
     }
 
@@ -95,6 +95,12 @@ public class ThreadManager {
     public void updateParticles() {
         for (ParticleEngine processor : processors) {
             executorService.submit(processor::run);
+        }
+    }
+
+    public void updateExplorer() {
+        if (explorerEngine != null) {
+            executorService.submit(explorerEngine::run);
         }
     }
 

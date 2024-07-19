@@ -4,6 +4,7 @@ import java.awt.event.KeyListener;
 
 public class ExplorerController implements KeyListener {
     private Explorer explorer;
+    private boolean upPressed, downPressed, leftPressed, rightPressed;
 
     public ExplorerController() {
     }
@@ -14,6 +15,17 @@ public class ExplorerController implements KeyListener {
 
     public void updateExplorer(int canvasWidth, int canvasHeight) {
         if (explorer != null) {
+            if (upPressed) {
+                explorer.setVelocity(0, 1);
+            } else if (downPressed) {
+                explorer.setVelocity(0, -1);
+            } else if (leftPressed) {
+                explorer.setVelocity(-1, 0);
+            } else if (rightPressed) {
+                explorer.setVelocity(1, 0);
+            } else {
+                explorer.setVelocity(0, 0);
+            }
             explorer.update(canvasWidth, canvasHeight);
         }
     }
@@ -34,19 +46,19 @@ public class ExplorerController implements KeyListener {
             switch (e.getKeyCode()) {
                 case KeyEvent.VK_W:
                 case KeyEvent.VK_UP:
-                    explorer.setVelocity(0, 1);
+                    upPressed = true;
                     break;
                 case KeyEvent.VK_S:
                 case KeyEvent.VK_DOWN:
-                    explorer.setVelocity(0, -1);
+                    downPressed = true;
                     break;
                 case KeyEvent.VK_A:
                 case KeyEvent.VK_LEFT:
-                    explorer.setVelocity(-1, 0);
+                    leftPressed = true;
                     break;
                 case KeyEvent.VK_D:
                 case KeyEvent.VK_RIGHT:
-                    explorer.setVelocity(1, 0);
+                    rightPressed = true;
                     break;
             }
         }
@@ -58,13 +70,19 @@ public class ExplorerController implements KeyListener {
             switch (e.getKeyCode()) {
                 case KeyEvent.VK_W:
                 case KeyEvent.VK_UP:
+                    upPressed = false;
+                    break;
                 case KeyEvent.VK_S:
                 case KeyEvent.VK_DOWN:
+                    downPressed = false;
+                    break;
                 case KeyEvent.VK_A:
                 case KeyEvent.VK_LEFT:
+                    leftPressed = false;
+                    break;
                 case KeyEvent.VK_D:
                 case KeyEvent.VK_RIGHT:
-                    explorer.setVelocity(0, 0);
+                    rightPressed = false;
                     break;
             }
         }

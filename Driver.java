@@ -24,8 +24,8 @@ public class Driver extends JFrame {
             Driver driver = new Driver();
             ControlPanel controlPanel = new ControlPanel(driver.simulationPanel.getThreadManager());
             
-            // Position ControlPanel to the right of Driver window
-            controlPanel.setLocation(driver.getX() + driver.getWidth(), driver.getY());
+            controlPanel.pack(); // Ensure control panel is packed
+            controlPanel.setLocationRelativeTo(driver); // Position control panel in the middle of driver window
             controlPanel.setVisible(true);
         });
     }
