@@ -9,6 +9,8 @@ public class SimulationPanel extends JPanel {
     private Thread gameThread;
     private volatile boolean running = false;
     private final FPSCounter fpsCounter = new FPSCounter();
+    private int explorerSpawnX = -1; // Default invalid value
+    private int explorerSpawnY = -1; // Default invalid value
 
     public SimulationPanel() {
         drawPanel = new DrawPanel();
@@ -24,6 +26,15 @@ public class SimulationPanel extends JPanel {
                 startGameLoop();
             }
         });
+
+        setFocusable(true);
+        requestFocusInWindow();
+        addKeyListener(threadManager.getExplorerController()); // Ensure the controller listens for key events
+    }
+
+    public void setExplorerSpawnLocation(int x, int y) {
+        explorerSpawnX = x;
+        explorerSpawnY = y;
     }
 
     public void startGameLoop() {
@@ -116,11 +127,35 @@ public class SimulationPanel extends JPanel {
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
             int canvasHeight = getHeight();
+            int canvasWidth = getWidth();
 
             g.setColor(Color.WHITE);
-            threadManager.drawParticles(g, canvasHeight);
+
             if (threadManager.getExplorerCount() > 0) {
-                threadManager.drawExplorer(g, canvasHeight);
+                Explorer explorer = threadManager.getExplorerController().getExplorer();
+                if (explorer != null) {
+                    // Calculate the viewport to center on the explorer
+                    int explorerX = (int) explorer.getX();
+                    int explorerY = (int) explorer.getY();
+
+                    int peripheryWidth = 33 * 15; // 33 columns of pixels
+                    int peripheryHeight = 19 * 15; // 19 rows of pixels
+
+                    int leftX = Math.max(0, explorerX - peripheryWidth / 2);
+                    int topY = Math.max(0, explorerY - peripheryHeight / 2);
+
+                    g.translate(-leftX, -topY); // Shift the viewport
+
+                    // Draw particles within the periphery
+                    threadManager.drawParticles(g, canvasHeight);
+
+                    // Draw explorer
+                    threadManager.drawExplorer(g, canvasHeight);
+
+                    g.translate(leftX, topY); // Reset the viewport shift
+                }
+            } else {
+                threadManager.drawParticles(g, canvasHeight);
             }
 
             if (fpsToDisplay >= 60) {

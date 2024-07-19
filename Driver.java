@@ -1,5 +1,5 @@
 import javax.swing.*;
-import java.awt.*;
+import java.awt.EventQueue;
 
 public class Driver extends JFrame {
     private final SimulationPanel simulationPanel;
@@ -22,10 +22,10 @@ public class Driver extends JFrame {
     public static void main(String[] args) {
         EventQueue.invokeLater(() -> {
             Driver driver = new Driver();
-            ControlPanel controlPanel = new ControlPanel(driver.simulationPanel.getThreadManager());
-            
-            controlPanel.pack(); // Ensure control panel is packed
-            controlPanel.setLocationRelativeTo(driver); // Position control panel in the middle of driver window
+            ControlPanel controlPanel = new ControlPanel(driver.simulationPanel.getThreadManager(), driver.simulationPanel);
+
+            // Set the ControlPanel location to the center of the screen
+            controlPanel.setLocationRelativeTo(null);
             controlPanel.setVisible(true);
         });
     }

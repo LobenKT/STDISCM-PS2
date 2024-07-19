@@ -9,30 +9,32 @@ public class ControlPanel extends JFrame {
     private final ThreadManager threadManager;
     private final JTextArea feedbackTextArea;
     private final List<String> feedbackMessages = new ArrayList<>();
+    private final SimulationPanel simulationPanel;
 
-    public ControlPanel(ThreadManager threadManager) {
+    public ControlPanel(ThreadManager threadManager, SimulationPanel simulationPanel) {
         this.threadManager = threadManager;
+        this.simulationPanel = simulationPanel;
         setTitle("Particle Controls");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setSize(750, 400);
-    
+
         feedbackTextArea = new JTextArea(10, 50);
         feedbackTextArea.setEditable(false);
         JScrollPane feedbackScrollPane = new JScrollPane(feedbackTextArea,
                 JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-    
+
         JLabel feedbackTitle = new JLabel("Output");
         feedbackTitle.setHorizontalAlignment(JLabel.CENTER);
         feedbackTitle.setBorder(new EmptyBorder(10, 0, 10, 0));
         feedbackTitle.setOpaque(true);
         feedbackTitle.setBackground(Color.WHITE);
-    
+
         JPanel feedbackPanel = new JPanel(new BorderLayout());
         feedbackPanel.add(feedbackTitle, BorderLayout.NORTH);
         feedbackPanel.add(feedbackScrollPane, BorderLayout.CENTER);
-    
+
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         mainPanel.add(createParticleInputPanel());
@@ -53,24 +55,52 @@ public class ControlPanel extends JFrame {
             threadManager.clearParticles(); // Clear all particles in ThreadManager
             clearFeedbackDisplay(); // Clear the output panel
         });
-    
+
         JPanel clearButtonPanel = new JPanel();
         clearButtonPanel.add(clearButton);
-        mainPanel.add(clearButtonPanel); // Add clear button
+        mainPanel.add(clearButtonPanel, BorderLayout.SOUTH); // Add clear button at the bottom of the main panel
     }
 
     private void setUpExplorer(JPanel mainPanel) {
-        JButton explorerButton = new JButton("Explorer Mode");
+        JPanel explorerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JLabel explorerLabel = new JLabel("Explorer Mode");
+        explorerLabel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
+    
+        JTextField spawnXInput = new JTextField(5);
+        JTextField spawnYInput = new JTextField(5);
+        JButton explorerButton = new JButton("Start Explorer Mode");
+    
+        explorerPanel.add(new JLabel("Spawn X:"));
+        explorerPanel.add(spawnXInput);
+        explorerPanel.add(new JLabel("Spawn Y:"));
+        explorerPanel.add(spawnYInput);
+        explorerPanel.add(explorerButton);
+    
         explorerButton.addActionListener(e -> {
-            dispose();
-            threadManager.addExplorer(new Explorer(100, 500));
+            try {
+                int spawnX = Integer.parseInt(spawnXInput.getText());
+                int spawnY = Integer.parseInt(spawnYInput.getText());
+    
+                if (spawnX < 0 || spawnX > simulationPanel.getWidth() || spawnY < 0 || spawnY > simulationPanel.getHeight()) {
+                    throw new NumberFormatException();
+                }
+    
+                simulationPanel.setExplorerSpawnLocation(spawnX, spawnY);
+                threadManager.addExplorer(new Explorer(spawnX, spawnY));
+                String feedback = "Explorer started at (" + spawnX + ", " + spawnY + ")";
+                updateFeedbackDisplay(feedback);
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this, "Please enter valid coordinates within the simulation panel's bounds.", "Input Error", JOptionPane.ERROR_MESSAGE);
+            }
         });
-
-        JPanel explorerButtonPanel = new JPanel();
-        explorerButtonPanel.add(explorerButton);
-        mainPanel.add(explorerButtonPanel); 
+    
+        JPanel explorerButtonPanel = new JPanel(new BorderLayout());
+        explorerButtonPanel.add(explorerLabel, BorderLayout.NORTH);
+        explorerButtonPanel.add(explorerPanel, BorderLayout.CENTER);
+        mainPanel.add(explorerButtonPanel);
     }
     
+
     private void clearFeedbackDisplay() {
         feedbackMessages.clear(); // Clear the list of messages
         feedbackTextArea.setText(""); // Reset the content of the feedback text area
@@ -202,7 +232,6 @@ public class ControlPanel extends JFrame {
             double velocity = Double.parseDouble(velocityInput.getText());
 
             for (int i = 0; i < number; i++) {
-                // Optional: Add a small offset to prevent overlap
                 threadManager.addParticle(new Particle(x + i, y + i, Math.cos(angle) * velocity, Math.sin(angle) * velocity));
             }
             String feedback = "Added " + number + " particles at (" + x + ", " + y + ") with angle " + Math.toDegrees(angle) + "° and velocity " + velocity;
@@ -225,7 +254,6 @@ public class ControlPanel extends JFrame {
 
             for (int i = 0; i < number; i++) {
                 double x = startX + i * stepX;
-                // Optional: Add a small offset to prevent overlap
                 threadManager.addParticle(new Particle((int) x + i, (int) y + i, Math.cos(angle) * velocity, Math.sin(angle) * velocity));
             }
             updateFeedbackDisplay("Added " + number + " particles from (" + startX + ", " + y + ") to (" + endX + ", " + y + ") with angle " + Math.toDegrees(angle) + "° and velocity " + velocity);
@@ -247,7 +275,6 @@ public class ControlPanel extends JFrame {
 
             for (int i = 0; i < number; i++) {
                 double angle = startAngle + i * stepAngle;
-                // Optional: Add a small offset to prevent overlap
                 threadManager.addParticle(new Particle((int) x + i, (int) y + i, Math.cos(angle) * velocity, Math.sin(angle) * velocity));
             }
             updateFeedbackDisplay("Added " + number + " particles at (" + x + ", " + y + ") with angles from " + Math.toDegrees(startAngle) + "° to " + Math.toDegrees(endAngle) + "° and velocity " + velocity);
@@ -269,7 +296,6 @@ public class ControlPanel extends JFrame {
 
             for (int i = 0; i < number; i++) {
                 double velocity = startVelocity + i * stepVelocity;
-                // Optional: Add a small offset to prevent overlap
                 threadManager.addParticle(new Particle((int) x + i, (int) y + i, Math.cos(angle) * velocity, Math.sin(angle) * velocity));
             }
             updateFeedbackDisplay("Added " + number + " particles at (" + x + ", " + y + ") with angle " + Math.toDegrees(angle) + "° and velocities from " + startVelocity + " to " + endVelocity);
@@ -277,6 +303,8 @@ public class ControlPanel extends JFrame {
             JOptionPane.showMessageDialog(this, "Please enter valid numbers for all fields.", "Input Error", JOptionPane.ERROR_MESSAGE);
         }
     }
+
+    
 
     private void updateFeedbackDisplay(String feedback) {
         feedbackMessages.add(feedback);

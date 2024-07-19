@@ -144,4 +144,8 @@ public class ThreadManager {
         }
         lastAverageProcessingTime = processingTimesHistory.stream().mapToLong(Long::longValue).sum() / processingTimesHistory.size();
     }
+
+    public ExplorerController getExplorerController() {
+        return explorerEngine != null ? explorerEngine.getExplorerController() : null;
+    }
 }
