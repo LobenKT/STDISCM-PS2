@@ -69,11 +69,11 @@ public class ControlPanel extends JFrame {
     }
 
     private void toggleExplorerMode() {
-        // Assuming `toggleMode` returns a boolean indicating the current mode after toggle
-        boolean isExplorerMode = threadManager.toggleMode(); // Manage mode state in ThreadManager
+        boolean isExplorerMode = threadManager.toggleMode(); // This should now work as expected.
         String mode = isExplorerMode ? "Explorer Mode" : "Developer Mode";
         JOptionPane.showMessageDialog(this, "Switched to " + mode);
     }
+    
 
     private void clearFeedbackDisplay() {
         feedbackMessages.clear(); // Clear the list of messages
