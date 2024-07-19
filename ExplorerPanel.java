@@ -134,7 +134,7 @@ public class ExplorerPanel extends JPanel{
             
             g.drawString(String.format("FPS: %.2f", fpsToDisplay), 10, 20);
             g.setColor(Color.BLUE);
-            g.drawString(String.format("Number of Particles: %d", threadManager.getParticleSize()), 100, 20);
+            g.drawString(String.format("Number of Particles: %d", threadManager.getParticleCount()), 100, 20);
         }
     }
 

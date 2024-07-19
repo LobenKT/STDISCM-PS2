@@ -1,4 +1,4 @@
-import java.awt.*;
+import java.awt.Graphics;
 
 public class Particle {
     private double x, y, vx, vy;
@@ -35,4 +35,8 @@ public class Particle {
         int invertedY = canvasHeight - (int) y - 10; // Adjust for particle size
         g.fillOval((int) x, invertedY, 10, 10);
     }
+    /*void zoomedDraw(Graphics g, int canvasHeight){
+        int invertedY = 720 - (int)y;
+        g.fillOval((int)x, invertedY, 100, 100);
+    }*/
 }
