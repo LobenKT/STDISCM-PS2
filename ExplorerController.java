@@ -1,5 +1,6 @@
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.Graphics;
 
 public class ExplorerController implements KeyListener {
     private Explorer explorer;
@@ -8,9 +9,19 @@ public class ExplorerController implements KeyListener {
         this.explorer = explorer;
     }
 
+    public Explorer getExplorer() {
+        return explorer;
+    }
+
     public void updateExplorer(int canvasWidth, int canvasHeight) {
         if (explorer != null) {
             explorer.update(canvasWidth, canvasHeight);
+        }
+    }
+
+    public void drawExplorer(Graphics g, int canvasHeight) {
+        if (explorer != null) {
+            explorer.draw(g, canvasHeight);
         }
     }
 
